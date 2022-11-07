@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="canonical" href="https://getbootstrap.kr/docs/5.1/examples/grid/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="/docs/5.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/docs/5.1/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" href="/docs/5.1/assets/img/favicons/manifest.json">
+    <link rel="mask-icon" href="/docs/5.1/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon.ico">
+    <meta name="theme-color" content="#7952b3">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .nicknameOk{
+            color:#008000;
+            display: none;
+        }
+
+        .nicknameError{
+            color:#6A82FB;
+            display: none;
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+    <link href="grid.css" rel="stylesheet">
+
+    <title>UserMyPage</title>
+</head>
+
+<body class="text:center">
+<main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!--네비게이션 바-->
+    <header>
+        <div th:insert="~{main/topUser :: top}"></div>
+    </header><br><br>
+
+    <h2 align="center">마이페이지</h2><br>
+    </div>
+
+    <div style="margin: auto; width: 600px;">
+    <form method="post" th:object="${userDto}" name="myPageForm" id="myPageForm" >
+        <h4 align="center">사용자 정보 수정</h4><hr>
+        <div class="mb-3 row">
+            <label for="staticId" class="col-sm-2 col-form-label">Id</label>
+            <div class="col-sm-10">
+                <input type="text" readonly class="form-control-plaintext" id="staticId" th:value="*{id}">
+            </div>
+        </div><hr>
+
+        <div class="mb-3 row">
+            <label for="password" class="col-sm-2 col-form-label">변경 Password</label>
+            <div class="col-sm-10 ">
+                <input name="password" id="password" class="form-control" placeholder="password" type="password">
+            </div>
+        </div><hr>
+
+        <div class="mb-3 row">
+            <label for="staticNickname" class="col-sm-2 col-form-label">Nickname</label>
+            <div class="col-sm-10">
+                <input type="text" readonly class="form-control-plaintext" id="staticNickname" th:value="*{nickname}">
+            </div>
+            <label for="nickname" class="col-sm-2 col-form-label">변경 Nickname</label>
+            <div class="col-sm-10">
+                <input name="nickname" id="nickname" class="form-control" placeholder="nickname" type="text" onfocusout="checkNickname()">
+            </div>
+            <span class="nicknameOk">사용 가능한 Nickname 입니다.</span>
+            <span class="nicknameError">중복된 Nickname 존재합니다.</span>
+        </div><hr>
+
+        <div class="mb-3 row">
+            <label for="staticLocation" class="col-sm-2 col-form-label">Location</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control-plaintext" id="staticLocation" th:value="${userDto.locationUser.dong}">
+            </div>
+
+            <label for="locationUserId" class="col-sm-5 col-form-label">변경 Location</label>
+            <div class="form-group input-group col-sm-10">
+                <select id="locationUserId" name="locationUserId" class="form-select" aria-label="Default select example">
+                    <option value="" selected>--location(동단위) 선택--</option>
+                    <option th:each="loc : ${locationUserList}" th:value="${loc.locationUserId}"
+                            th:utext="${loc.dong}">
+                    </option>
+                </select><br>
+            </div>
+        </div>
+
+        <div style="text-align:center;" class="col-auto">
+            <button type="button" class="btn btn-primary mb-3" id="submit" onclick="check()">변경하기</button>
+        </div>
+
+        <hr>
+
+        <input type="hidden" id="id" name="id" th:value="*{id}">
+        <input type="hidden" name="${_csrf.parameterName" value="${_csrf.token}"/>
+    </form>
+
+    <div class="btn-group" style="text-align:center;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="/post/list/user"><button class="btn btn-primary active" aria-current="page">작성한 글 목록</button></a>&nbsp;
+        <a href="/post/comment/list/user"><button class="btn btn-primary active" aria-current="page">작성한 댓글 목록</button></a>
+    </div>
+
+    </div>
+</main>
+
+</body>
+<script type="text/javascript" src="/js/user/myPage.js"></script>
+
+<script src="/docs/5.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+</html>

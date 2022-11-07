@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="http://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/docs/5.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/docs/5.1/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" href="/docs/5.1/assets/img/favicons/manifest.json">
+    <link rel="mask-icon" href="/docs/5.1/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon.ico">
+
+    <!--    Toast UI Editor-->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+
+<!--    댓글 css  -->
+    <link rel="stylesheet" href="/css/post.css">
+
+    <meta name="theme-color" content="#7952b3">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+    <title>PostView</title>
+</head>
+
+<body>
+
+<!--네비게이션 바-->
+<header>
+    <div th:insert="~{main/top :: top}"></div>
+</header><br><br><br><br>
+
+<h2 align="center">글</h2>
+</div><br><br>
+
+<form class="row g-3" style="margin: auto; width: 1000px;" th:object="${postDto}">
+
+    <!--    카테고리 선택     -->
+    <div class="col-md-7">
+        <label for="categoryName" class="form-label">Category</label>
+        <input type="text" readonly class="form-control" id="categoryName" th:value="*{category.name}">
+    </div><br><hr>
+
+    <!--    작성자      -->
+    <div class="col-md-7">
+        <label for="writer" class="form-label">Writer</label>
+        <input type="text" readonly class="form-control" id="writer" th:value="*{user.nickname}">
+    </div><br><hr>
+
+    <!--    제목      -->
+    <div class="col-md-7">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" readonly class="form-control" id="title" th:value="*{title}">
+    </div><br><hr>
+
+    <!--    내용      -->
+    <label for="content" class="form-label">Content</label>
+    <div id="viewer"></div><hr>
+
+    <!--        첨부파일      -->
+    <div class="col-md-6" th:if="${postDto.file != null}">
+        <label class="form-label">File : </label>
+        <a
+                class="card-text"
+                th:href="@{'/post/download/' + ${postDto.file.fileId}}"
+                th:text="${postDto.file.originName}"
+        ></a><hr>
+    </div>
+
+    <!--    위치정보    -->
+    <label for="map" class="form-label">Location</label>
+    <div class="hAddr">
+        <span class="title">주소 : </span>
+        <span id="centerAddr" th:text="${postDto.location.getAddress()}"></span>
+    </div>
+    <div id="map" style="width:1000px;height:400px;position:relative;overflow:hidden;"></div>
+    </div><hr>
+
+    <!--   작성 날짜       -->
+    <div class="col-md-6">
+        <label for="createDate" class="form-label">CreateDate</label>
+        <input type="text" readonly class="form-control" id="createDate" th:value="*{createDateFormat}">
+    </div>
+
+    <!--    수정 날짜       -->
+    <div class="col-md-6">
+        <label for="updateDate" class="form-label">UpdateDate</label>
+        <input type="text" readonly class="form-control" id="updateDate" th:value="*{updateDateFormat}">
+    </div>
+
+    <!--  글 목록으로 돌아가기  -->
+    <div class="btn-group">
+        <a class="btn btn-primary active" aria-current="page"
+           th:href="@{/post/list/categoryId/{categoryId}(categoryId=${postDto.category.categoryId})}">카테고리 글 목록</a>&nbsp;
+    </div>
+
+    <!--  글 작성자에게만 수정, 삭제 버튼 보이도록  -->
+    <div class="btn-group" th:if="${#authentication.getName().equals(postDto.user.id)}">
+        <a class="btn btn-primary active"
+           th:href="@{/post/update/postId/{postId}(postId=${postDto.postId})}">수정</a>
+        &nbsp;
+        <button class="btn btn-primary active" aria-current="page"
+           onClick="deletePost()"
+           th:text="삭제"></button>
+    </div>
+
+    <input type="hidden" id="postId" name="postId" th:value="*{postId}">
+    <input type="hidden" id="categoryId" name="categoryId" th:value="${postDto.category.categoryId}">
+    <input type="hidden" id="content" name="content" th:value="${postDto.content}">
+    <input type="hidden" id="lat" name="lat" th:value="${postDto.location.getLat()}">
+    <input type="hidden" id="lng" name="lng" th:value="${postDto.location.getLng()}">
+</form>
+
+<!--    댓글 작성하기     -->
+<form class="row g-3" style="margin: auto; width: 1000px;"><hr>
+    <div class="card">
+        <div class="card-header bi bi-chat-right-dots">댓글 작성</div>
+            <div class="card-body">
+                <textarea id="comment" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-primary bi bi-pencil-square" id="submit"
+                        onclick="writeComment()">댓글 작성하기</button>
+            </div>
+    </div>
+    <br><hr>
+</form>
+
+<!--    댓글 목록보기     -->
+<div class="card row g-3" style="margin: auto; width: 1000px;">
+
+    <div class="card-header bi bi-chat-dots">댓글 목록</div>
+    <ul class="list-group-flush">
+        <li id="comments-{{id}}" class="list-group-item" th:each="comment : ${postDto.commentList}">
+                <span>
+                    <span style="font-size: small" th:text="${comment.user.nickname}"></span>
+                    <span style="font-size: small" th:text="${comment.createDateFormat}"></span>
+                </span>
+
+                <!--  댓글 작성자에게만 수정, 삭제 버튼 보이도록  -->
+                <div class="btn-group" th:if="${#authentication.getName().equals(comment.user.id)}">
+                    <button class="btn btn-primary active" aria-current="page"
+                            th:id="updateButton + ${comment.commentId}"
+                            th:onclick="'javascript:updateFormComment('+${comment.commentId}+')'"
+                            th:text="수정"></button>
+                    &nbsp;
+                    <button class="btn btn-primary active" aria-current="page"
+                            th:onclick="'javascript:deleteComment('+${comment.commentId}+')'"
+                            th:text="삭제"></button>
+                </div>
+
+                <div class="card-body" >
+                    <input type="text" class="form-control" rows="2"
+                           th:id="commentForm + ${comment.commentId}"
+                           th:value="${comment.content}" readonly></input>
+                </div>
+        </li>
+    </ul>
+</div>
+
+</body>
+<!--    kakao map api   -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a8bdb29fc353af35ce6cde7ae45c8bc0&libraries=services,clusterer,drawing"></script>
+<script type="text/javascript" src="/js/post/view.js"></script>
+</html>
